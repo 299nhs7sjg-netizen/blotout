@@ -3,7 +3,9 @@
  * Do NOT put license keys in this file.
  */
 window.BLOTOUT_CONFIG = {
-  checkoutUrl: "", // Wes pastes Stripe Payment Link, Gumroad, or Lemon Squeezy product URL
+  checkoutUrl: "https://greenlight5868.gumroad.com/l/blotout-lifetime",
+  productId: "Qs1Qjc4ilvLILnInaDwHrg==",
+  productPermalink: "blotout-lifetime",
   adsenseClient: "", // ca-pub-XXXX when approved
   adSlots: { top: "", mid: "", export: "", footer: "" }
 };

@@ -7,6 +7,7 @@
   "use strict";
 
   const STORAGE_KEY = "blotout_unlocked_v1";
+  const SOURCE_KEY = "blotout_unlock_src_v1";
   const EXPORT_COUNT_KEY = "blotout_export_count_v1";
   const DEMO_KEY = "IB-BLO-DEMO-TEST";
   const FREE_EXPORT_LIMIT = 2;
@@ -110,20 +111,56 @@
   function isUnlocked() {
     try {
       const v = localStorage.getItem(STORAGE_KEY);
-      return !!(v && VALID_KEYS.has(normalizeKey(v)));
+      if (!v) return false;
+      const k = normalizeKey(v);
+      if (!k || k === "1") return false;
+      if (VALID_KEYS.has(k)) return true;
+      return localStorage.getItem(SOURCE_KEY) === "gumroad";
     } catch (_) {
       return false;
     }
   }
 
-  function persistUnlock(key) {
+  function persistUnlock(key, viaGumroad) {
     const k = normalizeKey(key);
-    if (!VALID_KEYS.has(k)) return false;
+    if (!k || k === "1") return false;
+    if (!viaGumroad && !VALID_KEYS.has(k)) return false;
     unlocked = true;
     try {
       localStorage.setItem(STORAGE_KEY, k);
+      localStorage.setItem(SOURCE_KEY, viaGumroad ? "gumroad" : "seed");
     } catch (_) {}
     return true;
+  }
+
+  async function verifyGumroadLicense(rawKey) {
+    const productId = String(CFG.productId || CFG.product_id || "").trim();
+    const permalink = String(CFG.productPermalink || CFG.product_permalink || "").trim();
+    if (!productId && !permalink) {
+      return { ok: false, message: "Product not configured for license verify." };
+    }
+    const body = new URLSearchParams();
+    if (productId) body.set("product_id", productId);
+    else body.set("product_permalink", permalink);
+    body.set("license_key", String(rawKey || "").trim());
+    const res = await fetch("https://api.gumroad.com/v2/licenses/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body.toString()
+    });
+    let data = null;
+    try { data = await res.json(); } catch (_) { data = null; }
+    if (data && data.success === true) {
+      const p = data.purchase || {};
+      if (p.refunded || p.chargebacked || p.disputed) {
+        return { ok: false, message: "This license is no longer valid." };
+      }
+      return { ok: true, data: data };
+    }
+    return {
+      ok: false,
+      message: (data && (data.message || data.error)) || "Invalid key. Buy from the store to receive a license key, then paste it here."
+    };
   }
 
   function getExportCount() {
@@ -266,8 +303,9 @@
     els.unlockModal.hidden = true;
   }
 
-  function tryUnlock(raw) {
-    const k = normalizeKey(raw);
+  async function tryUnlock(raw) {
+    const rawStr = String(raw || "").trim();
+    const k = normalizeKey(rawStr);
     if (!k) {
       els.unlockError.textContent =
         "Paste your license key from the store receipt, then tap Apply.";
@@ -284,14 +322,33 @@
           return;
         }
       }
-      persistUnlock(k);
+      persistUnlock(k, false);
       updateUI();
       closeModal();
       return;
     }
-    els.unlockError.textContent =
-      "Invalid key. Buy from the store to receive a license key, then paste it here.";
+    if (els.applyKeyBtn) els.applyKeyBtn.disabled = true;
+    els.unlockError.textContent = "Checking license…";
     els.unlockError.hidden = false;
+    try {
+      const result = await verifyGumroadLicense(rawStr);
+      if (result.ok) {
+        persistUnlock(k, true);
+        updateUI();
+        closeModal();
+        return;
+      }
+      els.unlockError.textContent =
+        result.message ||
+        "Invalid key. Buy from the store to receive a license key, then paste it here.";
+      els.unlockError.hidden = false;
+    } catch (_) {
+      els.unlockError.textContent =
+        "Could not verify license. Check your connection and try again.";
+      els.unlockError.hidden = false;
+    } finally {
+      if (els.applyKeyBtn) els.applyKeyBtn.disabled = false;
+    }
   }
 
   /* ——— Canvas / image ——— */
@@ -904,14 +961,12 @@
     redraw();
   });
 
-  /* Clear legacy / invalid stored keys */
+  /* Clear legacy honor unlock ("1") only — keep seed + Gumroad-verified keys */
   try {
     const legacy = localStorage.getItem(STORAGE_KEY);
-    if (
-      legacy === "1" ||
-      (legacy && !VALID_KEYS.has(normalizeKey(legacy)))
-    ) {
+    if (legacy === "1") {
       localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(SOURCE_KEY);
     }
   } catch (_) {}
 
