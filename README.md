@@ -1,6 +1,6 @@
 # BlotOut
 
-**Permanent screenshot scrubber.** Black out emails, names, API keys, and faces — solid fill, not reversible blur. Private, offline-capable static site. Price: **$0.99 lifetime unlock**.
+**Permanent screenshot scrubber.** Black out emails, names, API keys, and faces — solid fill, not reversible blur. Private, offline-capable static site. Price: **$2.99 lifetime unlock**.
 
 Your screenshots never leave the device — all processing uses Canvas / browser APIs.
 
@@ -30,7 +30,7 @@ No build step. No Node. No paid APIs.
 - Auto-detect hints (client-side OCR when network available): emails, phones, `sk-` keys, JWTs — accept as blots
 - Export PNG with blots burned in; EXIF stripped via re-encode
 - Free tier: “BlotOut” watermark + 2 exports, then unlock nag
-- Unlock $0.99 via license key only (no honor-system button)
+- Unlock $2.99 via license key only (no honor-system button)
 - Ad placeholders on free tier (`data-ad` regions); hidden when unlocked
 
 ## Unlock for testing

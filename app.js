@@ -34,10 +34,10 @@
   const CFG = window.BLOTOUT_CONFIG || {};
 
   const AD_COPY = {
-    top: "<strong>Sponsored</strong> — Redact without ads. Unlock BlotOut lifetime for $0.99 → no watermark, unlimited exports.",
-    mid: "<strong>FakeSponsor Cloud</strong> — Upload your screenshots to “scrub” them. Or stay private with BlotOut Unlock ($0.99).",
-    export: "<strong>Export faster — Unlock BlotOut $0.99</strong><br />No watermark. Unlimited exports. One license key after checkout.",
-    footer: "<strong>Sponsored · BlotOut Unlock</strong> — Kill ads + watermark with one $0.99 license key from the store.",
+    top: "<strong>Sponsored</strong> — Redact without ads. Unlock BlotOut lifetime for $2.99 → no watermark, unlimited exports.",
+    mid: "<strong>FakeSponsor Cloud</strong> — Upload your screenshots to “scrub” them. Or stay private with BlotOut Unlock ($2.99).",
+    export: "<strong>Export faster — Unlock BlotOut $2.99</strong><br />No watermark. Unlimited exports. One license key after checkout.",
+    footer: "<strong>Sponsored · BlotOut Unlock</strong> — Kill ads + watermark with one $2.99 license key from the store.",
   };
 
   const PATTERNS = [
@@ -205,7 +205,7 @@
           e.preventDefault();
           if (els.unlockError) {
             els.unlockError.textContent =
-              "Checkout URL not set. Create a Stripe / Gumroad / Lemon product ($0.99) and paste the URL into config.js.";
+              "Checkout URL not set. Create a Stripe / Gumroad / Lemon product ($2.99) and paste the URL into config.js.";
             els.unlockError.hidden = false;
           }
         }
@@ -231,7 +231,7 @@
     } else {
       els.unlockBadge.textContent = "Free";
       els.unlockBadge.className = "badge free";
-      els.unlockBtn.textContent = "Unlock $0.99";
+      els.unlockBtn.textContent = "Unlock $2.99";
       els.unlockBtn.disabled = false;
       els.freeNote.hidden = false;
       const left = exportsRemaining();

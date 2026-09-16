@@ -6,11 +6,11 @@ Unlock is **license-key only**. There is no “I paid — unlock” honor button
 
 ---
 
-## 1. Sell $0.99 lifetime unlock (required)
+## 1. Sell $2.99 lifetime unlock (required)
 
-Prefer **Stripe Payment Link** at $0.99 (~better net than Gumroad fees). Gumroad or Lemon Squeezy also work.
+Prefer **Stripe Payment Link** at $2.99 (~better net than Gumroad fees). Gumroad or Lemon Squeezy also work.
 
-1. Create a product: **BlotOut Lifetime Unlock** — price **$0.99** (one-time).
+1. Create a product: **BlotOut Lifetime Unlock** — price **$2.99** (one-time).
 2. Deliver **license keys** after purchase:
    - Upload codes from **`KEYS.PRIVATE.md` on the operator machine only** (never commit this file; never put it in the public repo).
    - Stripe: email a key manually or use a fulfillment integration / Zapier.
