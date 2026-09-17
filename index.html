@@ -28,7 +28,7 @@
     </div>
     <div class="top-actions">
       <span id="unlockBadge" class="badge free">Free</span>
-      <button type="button" class="btn ghost" id="unlockBtn">Unlock $2.99</button>
+      <button type="button" class="btn primary unlock-cta" id="unlockBtn">Unlock $2.99</button>
     </div>
   </header>
 
@@ -66,7 +66,9 @@
 
       <div class="free-note" id="freeNote">
         <strong>Free tier:</strong> watermark on export · <span id="exportsLeft">2 exports left</span>.
-        <button type="button" class="linkish" id="unlockLink">Unlock $2.99</button>
+        <div class="free-note-cta">
+          <button type="button" class="btn primary unlock-cta" id="unlockLink">Unlock $2.99 — lifetime</button>
+        </div>
       </div>
 
       <div class="actions">
@@ -89,6 +91,9 @@
         </div>
       </div>
 
+      <div class="actions unlock-inline" id="unlockInline">
+        <button type="button" class="btn primary wide unlock-cta" id="unlockNearExport">Unlock $2.99 — get license key</button>
+      </div>
       <div class="actions">
         <button type="button" class="btn primary wide" id="exportBtn" disabled>Export PNG</button>
         <button type="button" class="btn ghost" id="resetBtn" disabled>New image</button>
@@ -123,12 +128,14 @@
 
   <footer class="footer">
     <span>BlotOut · private screenshot redaction</span>
-    <button type="button" class="linkish" id="footerUnlock">Unlock $2.99</button>
+    <button type="button" class="btn primary unlock-cta footer-unlock-btn" id="footerUnlock">Unlock $2.99</button>
+    <a class="btn primary unlock-cta footer-buy-btn" id="footerBuy" data-checkout href="https://greenlight5868.gumroad.com/l/blotout-lifetime" target="_blank" rel="noopener">Buy $2.99 — lifetime</a>
     <span>No upload · client-side only</span>
     <aside class="cross-promo" aria-label="GreenTools">
-      <p class="cross-promo-intro">Four private, in-browser tools — $2.99 lifetime unlock each:</p>
+      <p class="cross-promo-intro">Private in-browser tools — $2.99 lifetime each:</p>
       <p class="cross-promo-hub"><a href="https://299nhs7sjg-netizen.github.io/greentools/">GreenTools hub</a></p>
       <ul class="cross-promo-list">
+        <li><a href="https://299nhs7sjg-netizen.github.io/docburn/">DocBurn</a> — permanent PDF burn-in · <a class="cross-buy" href="https://greenlight5868.gumroad.com/l/docburn-lifetime" target="_blank" rel="noopener">Buy</a></li>
         <li><a href="https://299nhs7sjg-netizen.github.io/snapfit/">SnapFit</a> — resize/compress for social · <a class="cross-buy" href="https://greenlight5868.gumroad.com/l/snapfit-lifetime" target="_blank" rel="noopener">Buy</a></li>
         <li><a href="https://299nhs7sjg-netizen.github.io/metagone/">MetaGone</a> — strip GPS/camera/AI tags + proof · <a class="cross-buy" href="https://greenlight5868.gumroad.com/l/metagone-lifetime" target="_blank" rel="noopener">Buy</a></li>
       </ul>
@@ -147,15 +154,16 @@
         <li>Ads hidden forever on this device</li>
       </ul>
       <div class="modal-actions">
-        <a class="btn primary wide" id="buyBtn" href="#" target="_blank" rel="noopener">Buy $2.99 — get license key</a>
+        <a class="btn primary wide unlock-cta" id="buyBtn" data-checkout href="https://greenlight5868.gumroad.com/l/blotout-lifetime" target="_blank" rel="noopener">Buy $2.99 — lifetime</a>
       </div>
+      <p class="soft-path">Keep using free anytime. After checkout, paste your license key below.</p>
       <p class="hint" id="checkoutHint" hidden></p>
       <label class="field">
         <span>License key</span>
         <input type="text" id="licenseKey" placeholder="XXXX-XXXX-XXXX-XXXX (from Gumroad receipt)" autocomplete="off" spellcheck="false" />
       </label>
       <div class="modal-actions">
-        <button type="button" class="btn primary wide" id="applyKeyBtn">Apply key</button>
+        <button type="button" class="btn primary wide unlock-cta" id="applyKeyBtn">Apply key</button>
       </div>
       <p class="hint" id="unlockError" hidden></p>
       <button type="button" class="btn ghost wide" id="demoUnlockBtn" hidden>Demo unlock (?demo=1)</button>
@@ -173,6 +181,11 @@
         <button type="button" class="btn ghost wide" id="nagDismiss">Not now</button>
       </div>
     </div>
+  </div>
+
+  <div class="sticky-unlock" id="stickyUnlock" hidden>
+    <span class="sticky-unlock-copy">$2.99 lifetime · no watermark</span>
+    <button type="button" class="btn primary unlock-cta" id="stickyUnlockBtn">Unlock $2.99</button>
   </div>
 
   <script src="config.js"></script>
