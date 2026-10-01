@@ -138,12 +138,9 @@
     return true;
   }
 
-  async function verifyGumroadLicense(rawKey) {
-    const productId = String(CFG.productId || CFG.product_id || "").trim();
-    const permalink = String(CFG.productPermalink || CFG.product_permalink || "").trim();
-    if (!productId && !permalink) {
-      return { ok: false, message: "Product not configured for license verify." };
-    }
+  /* One Gumroad verify call for a single product. Refund/chargeback/dispute
+     checks apply to every product tried (own + GreenTools All-Access bundle). */
+  async function verifyGumroadProduct(productId, permalink, rawKey) {
     const body = new URLSearchParams();
     if (productId) body.set("product_id", productId);
     else body.set("product_permalink", permalink);
@@ -158,14 +155,52 @@
     if (data && data.success === true) {
       const p = data.purchase || {};
       if (p.refunded || p.chargebacked || p.disputed) {
-        return { ok: false, message: "This license is no longer valid." };
+        return { ok: false, success: true, message: "This license is no longer valid." };
       }
-      return { ok: true, data: data };
+      return { ok: true, success: true, data: data };
     }
     return {
       ok: false,
+      success: false,
       message: (data && (data.message || data.error)) || "Invalid key. Buy from the store to receive a license key, then paste it here."
     };
+  }
+
+  /* Key-only verify: own product first; if that is not success:true and
+     bundleProductId (GreenTools All-Access) is set, retry with the bundle.
+     If both fail, the own-product error message is returned. */
+  async function verifyGumroadLicense(rawKey) {
+    const productId = String(CFG.productId || CFG.product_id || "").trim();
+    const permalink = String(CFG.productPermalink || CFG.product_permalink || "").trim();
+    const bundleProductId = String(CFG.bundleProductId || "").trim();
+    if (!productId && !permalink) {
+      return { ok: false, message: "Product not configured for license verify." };
+    }
+    const own = await verifyGumroadProduct(productId, permalink, rawKey);
+    if (own.ok || own.success) return own;
+    if (bundleProductId) {
+      const bundle = await verifyGumroadProduct(bundleProductId, "", rawKey);
+      if (bundle.ok) return bundle; // refunded/chargebacked/disputed bundle -> ok:false, falls through
+    }
+    return own;
+  }
+
+  /* GreenTools All-Access link(s): hidden unless config.js bundleCheckoutUrl is set. */
+  function updateBundleLink() {
+    const url = String(CFG.bundleCheckoutUrl || "").trim();
+    document.querySelectorAll("[data-bundle-checkout]").forEach(function (el) {
+      if (url) {
+        el.href = url;
+        el.setAttribute("target", "_blank");
+        el.setAttribute("rel", "noopener");
+        el.hidden = false;
+        el.style.display = "";
+      } else {
+        el.removeAttribute("href");
+        el.hidden = true;
+        el.style.display = "none";
+      }
+    });
   }
 
   function getExportCount() {
@@ -1001,4 +1036,5 @@
   updateCheckoutLink();
   updateUI();
   setMode("black");
+  updateBundleLink();
 })();
